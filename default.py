@@ -14,8 +14,10 @@ thisPlugin = int(sys.argv[1])
 baseLink = "http://www.servustv.com/"
 
 mediathekLink = baseLink + "cs/Satellite/VOD-Mediathek/001259088496198?p=1259088496182"
-showLink = baseLink + "cs/Satellite?pagename=ServusTV/Ajax/MediathekData&nachThemen=all&nachSendung=%s&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true"
+showLink = baseLink + "cs/Satellite?categoryId=%s&categoryNodeId=%s&pagename=ServusTV/Ajax/MediathekData&nachThemen=all&nachSendung=%s&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true"
 
+#cs/Satellite?categoryId=1259088496213&categoryNodeId=1259088496215&pagename=ServusTV%2FAjax%2FMediathekData&nachThemen=all&nachSendung=all&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true
+#cs/Satellite?categoryId=1259088496213&categoryNodeId=1259088496215&pagename=ServusTV%2FAjax%2FMediathekData&nachThemen=all&nachSendung=1259406665024&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true
 height = 1080
 const = "8e99dff8de8d8e378ac3f68ed404dd4869a4c007"
 playerID = 1254928709001
@@ -27,12 +29,17 @@ _regex_extractCategories = re.compile("<li class='category[0-9]{1}'><a href='(.*
 _regex_extractShows = re.compile("<select name=\"nachSendung\" id=\"nachSendung\">.*?</select>", re.DOTALL)
 _regex_extractShow = re.compile("<option value='(.*?)'>(.*?)</option>")
 
+
 _regex_extractShowNext = re.compile("<li><a href='(.*?)' class=\"nachste\">.*?</a></li>")
 
-_regex_extractEpisode = re.compile("<li class='.*?'>.*?<a href='#' title='(.*?)'.*?<img src='(.*?)'.*?name=\"videoList\.subcategory\" value='([0-9]*)'/>.*?<div class=\"programDescription\">(.*?)</div>.*?</li>", re.DOTALL)
+_regex_extractEpisode = re.compile("<li class='.*?'>.*?<a href='#' title='(.*?)'.*?<img src='(.*?)'.*?name=\"videoList\.subcategory\" value='([0-9]*)'/>.*?Sendung vom ([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}).*?<div class=\"programDescription\">(.*?)</div>.*?</li>", re.DOTALL)
 
 def mainPage():
     page = load_page(mediathekLink)
+    
+    menu_link = showLink % ("","","")
+    menu_name = "Alle"
+    addDirectoryItem(menu_name, {"action" : "show", "link": menu_link})
     
     for category in _regex_extractCategories.finditer(page):
         menu_link = category.group(1)
@@ -41,16 +48,19 @@ def mainPage():
     xbmcplugin.endOfDirectory(thisPlugin)
 
 def showCategory(link):
-    page = load_page(baseLink + urllib.unquote(link))
+    link = urllib.unquote(link)
+    page = load_page(baseLink + link)
+    categoryId = link[link.find("?p=")+3:]
     
-    shows = _regex_extractShows.search(page)
-    
-    menu_link = showLink % ("")
+    menu_link = showLink % (categoryId,"","")
     menu_name = "Alle"
     addDirectoryItem(menu_name, {"action" : "show", "link": menu_link})
     
+    
+    shows = _regex_extractShows.search(page)
+    
     for show in _regex_extractShow.finditer(shows.group(0)):
-        menu_link = showLink % (show.group(1))
+        menu_link = showLink % (categoryId,"",show.group(1))
         menu_name = show.group(2)
         addDirectoryItem(menu_name, {"action" : "show", "link": menu_link})
     xbmcplugin.endOfDirectory(thisPlugin)
@@ -59,7 +69,9 @@ def showPage(link):
     page = load_page(urllib.unquote(link))
     
     for episode in _regex_extractEpisode.finditer(page):
+        date = episode.group(4)
         name = episode.group(1)
+        name = name + " (" + date + ")"
         url = episode.group(3)
         thumbnail = baseLink + episode.group(2)
         addDirectoryItem(name, {'action':"episode", 'link':url}, thumbnail, False)
