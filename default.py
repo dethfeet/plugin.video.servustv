@@ -36,7 +36,7 @@ _regex_extractEpisode = re.compile("<!-- videotype:vod -->[ \n\r\t]*<li class='.
 def mainPage():
     page = load_page(mediathekLink)
     
-    menu_name = "Suche"
+    menu_name = addon.getLocalizedString(30001)
     addDirectoryItem(menu_name, {"action" : "search"})
     
     for category in _regex_extractCategories.finditer(page):
@@ -51,7 +51,7 @@ def showCategory(link):
     categoryId = link[link.find("?p=")+3:]
     
     menu_link = showLink % (categoryId,"","")
-    menu_name = "Alle"
+    menu_name = addon.getLocalizedString(30000)
     addDirectoryItem(menu_name, {"action" : "show", "link": menu_link})
 
     shows = _regex_extractShows.search(page)
