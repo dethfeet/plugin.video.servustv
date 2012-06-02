@@ -42,7 +42,7 @@ def mainPage():
     for category in _regex_extractCategories.finditer(page):
         menu_link = category.group(2)
         menu_name = category.group(3)
-        addDirectoryItem(menu_name, {"action" : "category", "link": menu_link})
+        addDirectoryItem(menu_name.strip(), {"action" : "category", "link": menu_link})
     xbmcplugin.endOfDirectory(thisPlugin)
 
 def showCategory(link):
@@ -59,7 +59,7 @@ def showCategory(link):
     for show in _regex_extractShow.finditer(shows.group(0)):
         menu_link = showLink % (categoryId,"",show.group(1))
         menu_name = show.group(2)
-        addDirectoryItem(menu_name.strip(), {"action" : "show", "link": menu_link})
+        addDirectoryItem(menu_name, {"action" : "show", "link": menu_link})
     xbmcplugin.endOfDirectory(thisPlugin)
 
 def showPage(link=None):
