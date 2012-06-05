@@ -31,7 +31,7 @@ _regex_extractShow = re.compile("<option value='(.*?)'>(.*?)</option>")
 
 _regex_extractShowNext = re.compile("<li><a href='(.*?)' class=\"nachste\">.*?</a></li>")
 
-_regex_extractEpisode = re.compile("<!-- videotype:vod -->[ \n\r\t]*<li class='.*?'>.*?<a href='#' title='(.*?)'.*?<img src='(.*?)'.*?name=\"videoList\.subcategory\" value='([0-9]*)'/>.*?Sendung vom ([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}).*?(<div class=\"programDescription\">|<span class=\"description\">)(.*?)(</div>|</span>).*?</li>", re.DOTALL)
+_regex_extractEpisode = re.compile("<!-- videotype:vod -->[ \n\r\t]*<li class='.*?'>.*?<a href='#' title='(.*?)'.*?<img src='(.*?)'.*?name=\"videoList\.featured\" value='([0-9]*)'/>.*?Sendung vom ([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}).*?(<div class=\"programDescription\">|<span class=\"description\">)(.*?)(</div>|</span>).*?</li>", re.DOTALL)
 
 def mainPage():
     page = load_page(mediathekLink)
@@ -92,7 +92,7 @@ def playEpisode(videoPlayer):
     xbmcplugin.setResolvedUrl(thisPlugin, True, item)
 
 def searchVideo():
-    keyboard = xbmc.Keyboard("")    
+    keyboard = xbmc.Keyboard("")
     keyboard.doModal();
     searchString = keyboard.getText()
     searchString = searchString.strip()

@@ -11,12 +11,10 @@ def build_amf_request(const, playerID, videoPlayer, publisherID):
     env = remoting.Envelope(amfVersion=3)
     env.bodies.append(
         (
-            "/3",
+            "/2",
             remoting.Request(
-                target="com.brightcove.player.runtime.PlayerMediaFacade.findPagingMediaCollectionByReferenceId",
-                body=[const, playerID, videoPlayer,0,50, publisherID],
-				#body=["8e99dff8de8d8e378ac3f68ed404dd4869a4c007",1254928709001,"1259322203560",0,50,900189268001],
-                #body=["8e99dff8de8d8e378ac3f68ed404dd4869a4c007", 1254928709001, 1259322203560, 900189268001],
+                target="com.brightcove.player.runtime.PlayerMediaFacade.findMediaByReferenceId",
+                body=[const, playerID, videoPlayer, publisherID],
                 envelope=env
             )
         )
@@ -34,7 +32,6 @@ def get_clip_info(const, playerID, videoPlayer, publisherID):
 
 def play(const, playerID, videoPlayer, publisherID, height):
     rtmpdata = get_clip_info(const, playerID, videoPlayer, publisherID)
-    rtmpdata = rtmpdata["videoDTOs"][0]
 
     streamName = ""
     streamUrl = "";
@@ -47,4 +44,3 @@ def play(const, playerID, videoPlayer, publisherID, height):
     
     streamName = streamName + rtmpdata['displayName']
     return [streamName, streamUrl];
-	
