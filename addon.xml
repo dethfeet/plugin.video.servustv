@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.servustv" name="ServusTV - Mediathek" version="0.0.2" provider-name="dethfeet">
+<addon id="plugin.video.servustv" name="ServusTV - Mediathek" version="0.0.3" provider-name="dethfeet">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
     <import addon="xbmc.gui" version="2.11"/>
@@ -9,8 +9,8 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <language>de</language>
-    <summary>ServusTV</summary>
- 	<description>ServusTV</description>
+    <summary>ServusTV - Wir wünschen Ihnen bessere Unterhaltung.</summary>
+ 	<description>Hier finden Sie Ihre Lieblingssendungen aus dem Programm von ServusTV zum immer wieder Sehen</description>
     <platform>all</platform>
   </extension>
 </addon>
