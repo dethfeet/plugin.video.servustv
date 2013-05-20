@@ -1,3 +1,4 @@
+0.0.5 - Make plugin work again
 0.0.4 - Add changelog
 		Update addon.xml
 		Remove pyamf
