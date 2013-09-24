@@ -3,10 +3,9 @@ import xbmcgui
 import xbmcaddon
 import sys
 import urllib, urllib2
-import pprint
 import re
-import urlparse
 import brightcovePlayer
+import time
 
 urllib2.socket.setdefaulttimeout(30)
 
@@ -23,8 +22,13 @@ height = 1080
 const = "8e99dff8de8d8e378ac3f68ed404dd4869a4c007"
 playerID = 1254928709001
 publisherID = 900189268001
-
 playerKey = "AQ~~,AAAA0Zd2KCE~,a1ZzPs5ODGffVvk2dn1CRCof3Ru_I9gE"
+
+#Livestream
+lsConst = const
+lsPlayerId = "1367797870001"
+lsPublisherID = publisherID
+lsPlayerKey = "AQ~~,AAAA0Zd2KCE~,a1ZzPs5ODGc3HZsfO-y9tdzF5dwFBjIr"
 
 _regex_extractCategories = re.compile("<li class=(\"allevideos\"|'category[0-9]{1}')><a href='(.*?)'>(.*?)</a></li>", re.DOTALL)
 _regex_extractShows = re.compile("<select name=\"nachSendung\" id=\"nachSendung\">.*?</select>", re.DOTALL)
@@ -45,6 +49,7 @@ def mainPage():
         menu_link = category.group(2)
         menu_name = category.group(3)
         addDirectoryItem(menu_name.strip(), {"action" : "category", "link": menu_link})
+    addDirectoryItem('Livestream', {"action" : "livestream","ts":time.time()},folder=False)
     xbmcplugin.endOfDirectory(thisPlugin)
 
 def showCategory(link):
@@ -83,7 +88,19 @@ def showPage(link=None):
     xbmcplugin.endOfDirectory(thisPlugin)
 
 def playEpisode(videoPlayer):
-    brightcove_item = brightcovePlayer.play(const, playerID, str(videoPlayer), publisherID, height)
+    brightcove_item = brightcovePlayer.play(const, playerID, str(videoPlayer), publisherID, height, playerKey)
+    stream_url = brightcove_item[1]
+    rtmpbase = stream_url[0:stream_url.find("&")]
+    playpath = stream_url[stream_url.find("&") + 1:]
+    
+    finalurl = rtmpbase + ' playpath=' + playpath
+    
+    item = xbmcgui.ListItem(path=finalurl)
+    xbmcplugin.setResolvedUrl(thisPlugin, True, item)
+    
+def playLivestream():
+    #livestream-profile0
+    brightcove_item = brightcovePlayer.play(lsConst, lsPlayerId, 'livestream-profile0', lsPublisherID, height, lsPlayerKey)
     stream_url = brightcove_item[1]
     rtmpbase = stream_url[0:stream_url.find("&")]
     playpath = stream_url[stream_url.find("&") + 1:]
@@ -150,6 +167,8 @@ else:
         showPage(urllib.unquote(params['link']))
     elif params['action'] == "episode":
         playEpisode(params['link'])
+    elif params['action'] == "livestream":
+        playLivestream()
     elif params['action'] == "search":
         searchVideo()
     else:
